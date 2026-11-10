@@ -6,6 +6,8 @@ Nous construisons un outil qui valorise une option européenne avec Black-Schole
 
 **À lire en premier : [`docs/MATIERE.md`](docs/MATIERE.md)** — la matière dans son ensemble (dérivés, binomial, Black-Scholes, volatilité, portefeuille, CAPM, Odoo, IA, carte des 10 projets) ; **puis [`docs/COMPRENDRE.md`](docs/COMPRENDRE.md)** — ce que chaque membre doit savoir expliquer sur notre projet, avec les chiffres de référence et les questions de soutenance probables. Les unités communes sont dans [`CONVENTIONS.md`](CONVENTIONS.md).
 
+**Membre du groupe : ta feuille de route est [`CLAUDE.md`](CLAUDE.md) §14** (installation, règles notées, ton rôle, ta prochaine tâche, façon de contribuer) ; le plan étape par étape est au §9.
+
 ## Démarrage rapide
 
 ```bash
@@ -32,7 +34,7 @@ greeks(100, 100, 1, 0.05, 0.20, "call")     # delta 0.6368, gamma 0.0188, vega 3
 | `odoo_addons/cours_derives/` | module du TP 0 étendu (S3) |
 | `docs/` | `MATIERE.md` (la matière), `COMPRENDRE.md` (le projet), fiche de lecture, Gantt prévisionnel et réalisé, schéma de base de données, mini-comptes rendus, rapport |
 | `tools/` | scripts qui régénèrent la fiche de lecture, le Gantt et le schéma de base de données |
-| `CLAUDE.md` | fichier de reprise : objectif, état d'avancement, décisions, prochaines actions |
+| `CLAUDE.md` | fichier de pilotage : état d'avancement, décisions, plan étape par étape (§9), guide du membre (§14), règles des sessions Claude (§11) |
 | `docker-compose.yml` | Odoo 17 + PostgreSQL 15 |
 
 ## Discipline Git

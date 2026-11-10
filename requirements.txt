@@ -1,0 +1,10 @@
+# Python 3.10 à 3.12 conseillé (TensorFlow ne suit pas toujours la dernière version de Python)
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+matplotlib>=3.8
+yfinance>=0.2.40
+pytest>=8.0
+scikit-learn>=1.4        # MinMaxScaler, métriques
+tensorflow>=2.16         # LSTM (Keras) : à installer en S3
+arch>=7.0                # référence GARCH pour comparer le LSTM

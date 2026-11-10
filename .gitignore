@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+.env
+data/*.csv
+!data/*_fallback.csv        # CSV de repli versionnés (yfinance indisponible) : voir CLAUDE.md §9, S2-02
+*.keras
+*.h5
+.DS_Store

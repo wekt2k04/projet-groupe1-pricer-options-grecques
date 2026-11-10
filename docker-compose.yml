@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    image: odoo:17.0
+    depends_on: [db]
+    ports: ["8069:8069"]       # si le port est pris : "8070:8069"
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+      - PYTHONPATH=/mnt/finance_src    # permet `from pricing import bs_price, greeks` dans le module
+    volumes:
+      - ./odoo_addons:/mnt/extra-addons
+      - ./src:/mnt/finance_src:ro      # code financier pur, partagé avec les tests
+
+volumes:
+  pgdata:
+
+# Lancer :   docker compose up -d      puis http://localhost:8069
+# Tests Odoo : docker compose run --rm web odoo -d mabase -u cours_derives --test-tags /cours_derives --stop-after-init

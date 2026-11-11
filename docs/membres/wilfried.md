@@ -1,7 +1,7 @@
-# Assia SADOUR (IDIA3)
+# Komla Edem Wilfried TSETSE (IDIA3)
 
-- GitHub : as7ia
-- Rôle S1 à S4 : quant / data
-- Rôle S5 à S7 : ingénieure IA
-- Ce que je fais en S2 : notebooks `01_donnees` et `02_modele_python` avec Wilfried, calcul de la volatilité historique à partir des données yfinance et validation du pricer Black-Scholes et des cinq Grecques.
-- Une notion du projet que je sais déjà expliquer : la volatilité historique mesure l'amplitude des fluctuations des rendements d'une action. On la calcule à partir de l'écart-type des rendements logarithmiques, puis on l'annualise en multipliant par √252. Elle intervient dans le calcul du prix d'une option avec Black-Scholes.
+- GitHub : wekt2k04
+- Rôle S1 à S4 : chef de projet / finance
+- Rôle S5 à S7 : quant / data
+- Ce que je fais en S2 : notebooks `01_donnees` et `02_modele_python` avec le quant, et mise à jour du Gantt.
+- Une notion du projet que je sais déjà expliquer : le Delta du call (0,6368 dans le cas S = K = 100, T = 1, r = 5 %, σ = 20 %) est le nombre d'actions à détenir pour couvrir le call, pas sa probabilité d'exercice, qui est N(d2) = 0,5596.

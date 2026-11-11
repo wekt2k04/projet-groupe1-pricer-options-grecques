@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="demo_portfolio_1" model="cours.portfolio">
+        <field name="name">Portefeuille du cours</field>
+    </record>
+    <!-- Exercice 2.1 : S0 = 80, r = 4 %, T = 0,5 -> F0 = 81,62 ; coté 82 -> arbitrage 0,38 -->
+    <record id="demo_forward_1" model="cours.forward">
+        <field name="name">FWD-ACTION-6M</field>
+        <field name="portfolio_id" ref="demo_portfolio_1"/>
+        <field name="S0">80</field>
+        <field name="r">0.04</field>
+        <field name="T">0.5</field>
+        <field name="market_price">82</field>
+    </record>
+    <!-- Exercice 2.7 : F0 = 100, T = 1, après 6 mois St = 108, r = 4 % -> Vt = 9,98
+         (S0 = 100 / exp(0,04) pour que F0 = 100) -->
+    <record id="demo_forward_2" model="cours.forward">
+        <field name="name">FWD-EN-COURS-DE-VIE</field>
+        <field name="portfolio_id" ref="demo_portfolio_1"/>
+        <field name="S0">96.07894391523232</field>
+        <field name="r">0.04</field>
+        <field name="T">1</field>
+        <field name="t">0.5</field>
+        <field name="St">108</field>
+    </record>
+    <record id="demo_call_1" model="cours.option">
+        <field name="name">CALL-K50</field>
+        <field name="portfolio_id" ref="demo_portfolio_1"/>
+        <field name="type">call</field>
+        <field name="position">long</field>
+        <field name="K">50</field>
+        <field name="S0">50</field>
+        <field name="S_T">55</field>
+        <field name="premium">3</field>
+    </record>
+    <record id="demo_put_1" model="cours.option">
+        <field name="name">PUT-K50</field>
+        <field name="portfolio_id" ref="demo_portfolio_1"/>
+        <field name="type">put</field>
+        <field name="position">long</field>
+        <field name="K">50</field>
+        <field name="S0">50</field>
+        <field name="S_T">45</field>
+        <field name="premium">2.5</field>
+    </record>
+    <record id="demo_markowitz_1" model="cours.markowitz">
+        <field name="name">Exercice 2.4 (60/40)</field>
+    </record>
+    <record id="demo_capm_1" model="cours.capm">
+        <field name="name">Exercice 2.5 (beta = 1,4)</field>
+        <field name="beta">1.4</field>
+        <field name="observed">0.08</field>
+    </record>
+    <record id="demo_volatility_1" model="cours.volatility">
+        <field name="name">Action de démonstration</field>
+        <field name="prices">100 101.5 100.8 102.3 101.1 103.4 102.0 104.2 103.5 105.1 104.0 106.2 105.5 107.0</field>
+    </record>
+</odoo>

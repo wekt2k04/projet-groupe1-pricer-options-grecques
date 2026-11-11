@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== Forward ===== -->
+    <record id="view_cours_forward_tree" model="ir.ui.view">
+        <field name="name">cours.forward.tree</field>
+        <field name="model">cours.forward</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="S0"/>
+                <field name="r"/>
+                <field name="T"/>
+                <field name="F0"/>
+                <field name="market_price"/>
+                <field name="arbitrage_gain"/>
+                <field name="Vt"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_cours_forward_form" model="ir.ui.view">
+        <field name="name">cours.forward.form</field>
+        <field name="model">cours.forward</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Contrat">
+                            <field name="name"/>
+                            <field name="portfolio_id"/>
+                            <field name="S0"/>
+                            <field name="r"/>
+                            <field name="T"/>
+                            <field name="F0"/>
+                        </group>
+                        <group string="Arbitrage">
+                            <field name="market_price"/>
+                            <field name="arbitrage_signal"/>
+                            <field name="arbitrage_gain"/>
+                        </group>
+                    </group>
+                    <group string="Valeur en cours de vie">
+                        <field name="St"/>
+                        <field name="t"/>
+                        <field name="Vt"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_cours_forward" model="ir.actions.act_window">
+        <field name="name">Forwards</field>
+        <field name="res_model">cours.forward</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ===== Option ===== -->
+    <record id="view_cours_option_tree" model="ir.ui.view">
+        <field name="name">cours.option.tree</field>
+        <field name="model">cours.option</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="position"/>
+                <field name="K"/>
+                <field name="S_T"/>
+                <field name="premium"/>
+                <field name="payoff"/>
+                <field name="profit"/>
+                <field name="moneyness"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_cours_option_form" model="ir.ui.view">
+        <field name="name">cours.option.form</field>
+        <field name="model">cours.option</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Contrat">
+                            <field name="name"/>
+                            <field name="portfolio_id"/>
+                            <field name="type"/>
+                            <field name="position"/>
+                            <field name="quantity"/>
+                            <field name="K"/>
+                            <field name="premium"/>
+                        </group>
+                        <group string="Marché">
+                            <field name="S0"/>
+                            <field name="S_T"/>
+                            <field name="r"/>
+                            <field name="T"/>
+                            <field name="sigma"/>
+                        </group>
+                    </group>
+                    <group string="Résultats">
+                        <field name="payoff"/>
+                        <field name="profit"/>
+                        <field name="break_even"/>
+                        <field name="moneyness"/>
+                        <field name="bs_price"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_cours_option_search" model="ir.ui.view">
+        <field name="name">cours.option.search</field>
+        <field name="model">cours.option</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="calls" string="Calls" domain="[('type', '=', 'call')]"/>
+                <filter name="puts" string="Puts" domain="[('type', '=', 'put')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_type" string="Type" context="{'group_by': 'type'}"/>
+                    <filter name="group_position" string="Position" context="{'group_by': 'position'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_cours_option_graph" model="ir.ui.view">
+        <field name="name">cours.option.graph</field>
+        <field name="model">cours.option</field>
+        <field name="arch" type="xml">
+            <graph string="Répartition calls / puts" type="bar">
+                <field name="type"/>
+                <field name="payoff" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_cours_option_pivot" model="ir.ui.view">
+        <field name="name">cours.option.pivot</field>
+        <field name="model">cours.option</field>
+        <field name="arch" type="xml">
+            <pivot string="Options">
+                <field name="type" type="row"/>
+                <field name="position" type="col"/>
+                <field name="profit" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="action_cours_option" model="ir.actions.act_window">
+        <field name="name">Options</field>
+        <field name="res_model">cours.option</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+    </record>
+</odoo>

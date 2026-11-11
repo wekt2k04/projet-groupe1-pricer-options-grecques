@@ -21,6 +21,7 @@ Module pédagogique du chapitre 2 (ENSA Safi, GIIA) :
         'views/option_point_views.xml',
         'views/portefeuille_views.xml',
         'views/menus.xml',
+        'views/vol_prediction_views.xml',
     ],
     'demo': ['demo/demo.xml'],
     'application': True,

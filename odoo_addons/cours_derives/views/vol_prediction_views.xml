@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Groupe 1, Projet 1 : bouton « Prédire la volatilité » et historique des prévisions -->
+<odoo>
+    <record id="view_cours_option_form_prediction" model="ir.ui.view">
+        <field name="name">cours.option.form.prediction</field>
+        <field name="model">cours.option</field>
+        <field name="inherit_id" ref="view_cours_option_form_greeks"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_predire_vol" string="Prédire la volatilité" type="object"/>
+            </xpath>
+            <xpath expr="//field[@name='sigma_lstm']" position="before">
+                <field name="volatility_id"/>
+                <field name="prediction_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_cours_vol_prediction_tree" model="ir.ui.view">
+        <field name="name">cours.vol.prediction.tree</field>
+        <field name="model">cours.vol.prediction</field>
+        <field name="arch" type="xml">
+            <tree create="false">
+                <field name="date_prevision"/>
+                <field name="name"/>
+                <field name="modele"/>
+                <field name="horizon_jours"/>
+                <field name="vol_historique"/>
+                <field name="vol_predite"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_cours_vol_prediction" model="ir.actions.act_window">
+        <field name="name">Prévisions de volatilité</field>
+        <field name="res_model">cours.vol.prediction</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_cours_vol_prediction" name="Prévisions LSTM" parent="menu_cours_theorie"
+              action="action_cours_vol_prediction" sequence="40"/>
+</odoo>

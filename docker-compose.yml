@@ -18,12 +18,14 @@ services:
       - USER=odoo
       - PASSWORD=odoo
       - PYTHONPATH=/mnt/finance_src    # permet `from pricing import bs_price, greeks` dans le module
+      - LSTM_MODEL_PATH=/mnt/finance_models/lstm_vol.npz   # modèle exporté par notebooks/03_ia.ipynb
     volumes:
       - ./odoo_addons:/mnt/extra-addons
       - ./src:/mnt/finance_src:ro      # code financier pur, partagé avec les tests
+      - ./models:/mnt/finance_models:ro    # poids du LSTM (inférence NumPy, src/ml.py)
 
 volumes:
   pgdata:
 
 # Lancer :   docker compose up -d      puis http://localhost:8069
-# Tests Odoo : docker compose run --rm web odoo -d mabase -u cours_derives --test-tags /cours_derives --stop-after-init
+# Tests Odoo : docker compose run --rm web odoo -d groupe1 -u cours_derives --test-tags /cours_derives --stop-after-init

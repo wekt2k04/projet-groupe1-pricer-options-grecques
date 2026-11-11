@@ -61,3 +61,18 @@ def test_lstm_numpy_identique_a_keras():
     W, U, b = m.layers[0].get_weights()
     Wd, bd = m.layers[1].get_weights()
     assert np.allclose(lstm_forward(X, W, U, b, Wd, bd), m.predict(X, verbose=0).ravel(), atol=1e-5)
+
+
+def test_export_et_prevision_aller_retour(tmp_path):
+    from ml import load_model, predict_vol, save_model, scale, unscale
+    rng = np.random.default_rng(1)
+    w = dict(W=rng.normal(size=(1, 16)), U=rng.normal(size=(4, 16)), b=rng.normal(size=16), Wd=rng.normal(size=(4, 1)), bd=rng.normal(size=1))
+    meta = {"variante": "V1", "window": 30, "horizon": 5, "x_scale": [-0.05, 0.05], "y_scale": [0.05, 0.6]}
+    chemin = tmp_path / "m.npz"
+    save_model(chemin, w, meta)
+    assert load_model(chemin)[1] == meta
+    r = rng.normal(0, 0.01, 50)
+    attendu = unscale(lstm_forward(scale(r[-30:], -0.05, 0.05)[None, :, None], **w), 0.05, 0.6)[0]
+    assert predict_vol(r, chemin) == pytest.approx(attendu)
+    with pytest.raises(ValueError):
+        predict_vol(r[:10], chemin)

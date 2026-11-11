@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_cours_root" name="Produits dérivés" sequence="50"/>
+    <menuitem id="menu_cours_derives" name="Dérivés" parent="menu_cours_root" sequence="10"/>
+    <menuitem id="menu_cours_forward" name="Forwards" parent="menu_cours_derives" action="action_cours_forward" sequence="10"/>
+    <menuitem id="menu_cours_option" name="Options" parent="menu_cours_derives" action="action_cours_option" sequence="20"/>
+    <menuitem id="menu_cours_portfolio" name="Portefeuilles de dérivés" parent="menu_cours_derives" action="action_cours_portfolio" sequence="30"/>
+    <menuitem id="menu_cours_theorie" name="Théorie du portefeuille" parent="menu_cours_root" sequence="20"/>
+    <menuitem id="menu_cours_markowitz" name="Markowitz" parent="menu_cours_theorie" action="action_cours_markowitz" sequence="10"/>
+    <menuitem id="menu_cours_capm" name="CAPM" parent="menu_cours_theorie" action="action_cours_capm" sequence="20"/>
+    <menuitem id="menu_cours_volatility" name="Volatilité" parent="menu_cours_theorie" action="action_cours_volatility" sequence="30"/>
+</odoo>

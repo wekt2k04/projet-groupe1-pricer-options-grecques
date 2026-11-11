@@ -10,6 +10,9 @@ from reportlab.platypus import (Paragraph, SimpleDocTemplate, Spacer, Table,
                                 TableStyle, KeepTogether)
 
 F = "/usr/share/fonts/truetype/dejavu/"
+if not pathlib.Path(F).exists():          # Windows / macOS : polices DejaVu fournies avec matplotlib
+    import matplotlib
+    F = str(pathlib.Path(matplotlib.get_data_path()) / "fonts" / "ttf") + "/"
 for n, f in (("DV", "DejaVuSans.ttf"), ("DV-B", "DejaVuSans-Bold.ttf"), ("DV-I", "DejaVuSans-Oblique.ttf"),
              ("DV-BI", "DejaVuSans-BoldOblique.ttf")):
     pdfmetrics.registerFont(TTFont(n, F + f))
@@ -53,7 +56,8 @@ def footer(c, d):
 st = []
 st += [Paragraph("Fiche de lecture — Pricer d'Options &amp; Grecques", S["t"]),
        Paragraph("Groupe 1 · Phase 0 · Black-Scholes, Grecques, volatilité et prévision par LSTM", S["st"]),
-       Paragraph("Module Finance des Marchés et ERP — ENSA Safi, 2026-2027 · Membres : à compléter", S["st"]),
+       Paragraph("Module Finance des Marchés et ERP — ENSA Safi, 2026-2027 · Membres : Hiba BOULHAIL, Assia SADOUR, "
+                 "Fatima-ezzahraa EL ANKOUD, Zineb ELAMRANI, Komla Edem Wilfried TSETSE", S["st"]),
        Spacer(1, 4)]
 
 st += [H("1. Objet de la lecture"),
@@ -110,21 +114,31 @@ st += [H("5. Prévoir la volatilité par un LSTM"),
          "requiert la volatilité moyenne jusqu'à l'échéance, alors que le LSTM prévoit celle du lendemain : la prévision devra "
          "être agrégée sur la maturité avant d'être injectée dans le prix.")]
 
-st += [H("6. Questions ouvertes pour le groupe"),
-       P("Source du taux sans risque r (valeur fixe ou taux de marché) ; choix du sous-jacent et de l'historique (AAPL, 2 ans, "
-         "puis 10 ans pour le LSTM) ; noms des champs de l'extension de cours.option à aligner avec les groupes 4 et 7 ; "
-         "méthode d'affichage de Delta(S) dans Odoo, la vue graphique n'agrégeant que des enregistrements ; "
-         "intégration du LSTM sans TensorFlow dans le conteneur Odoo.")]
+st += [H("6. Lien avec le TP 0 : ce que nous modifions"),
+       P("Le module <i>cours_derives</i> du TP 0 contient déjà le modèle <i>cours.option</i> : champs saisis type, position, quantity, "
+         "S0, S_T, K, premium, r, T, sigma ; champs calculés payoff, profit, break_even, moneyness et bs_price. Nous ne touchons pas à "
+         "ce fichier : <i>models/option_greeks.py</i> l'étend par <i>_inherit = 'cours.option'</i> et ajoute greeks_delta, greeks_gamma, "
+         "greeks_vega, greeks_theta et greeks_rho (compute, store=True, @api.depends('type', 'S0', 'K', 'r', 'T', 'sigma')), "
+         "sigma_lstm et bs_price_lstm. <i>cours.portfolio</i> reçoit la somme signée des Grecques de ses options (delta_total) ; "
+         "deux modèles nouveaux stockent les séries de volatilité et les prévisions (voir le schéma de base de données). "
+         "Les noms du TP 0 sont conservés : aucun doublon spot/S0 ou strike/K.")]
+
+st += [H("7. Algorithme de calcul (Python)"),
+       P("(1) Télécharger 2 ans de cours de clôture ajustés (yfinance, AAPL ; repli CSV). (2) Calculer r<sub>t</sub> = ln(S<sub>t</sub>/S<sub>t−1</sub>) "
+         "puis σ = écart-type(r<sub>t</sub>)·√252. (3) Calculer d<sub>1</sub>, d<sub>2</sub>, le prix (bs_price) et les Grecques (greeks), avec "
+         "N(x) = ½·(1 + erf(x/√2)) pour se passer de SciPy dans Odoo ; si T = 0 ou σ = 0, renvoyer la valeur intrinsèque sans "
+         "division par zéro. (4) Valider par pytest : parité call-put, différences finies, équation de Black-Scholes. "
+         "(5) Appeler ces fonctions dans _compute_greeks. (6) Entraîner le LSTM hors d'Odoo, le comparer aux trois références, "
+         "agréger sa prévision sur la maturité et en déduire bs_price_lstm. Questions ouvertes : source du taux r, historique de "
+         "10 ans pour le LSTM, noms à aligner avec les groupes 4 et 7, affichage de Delta(S).")]
 
 refs = ["Black, F. et Scholes, M. (1973). The Pricing of Options and Corporate Liabilities. <i>Journal of Political Economy</i>, 81(3), 637-654.",
-        "Merton, R. C. (1973). Theory of Rational Option Pricing. <i>Bell Journal of Economics and Management Science</i>, 4(1), 141-183.",
         "Hull, J. C. <i>Options, Futures and Other Derivatives</i>. Pearson.",
-        "Bossu, S. et Henrotte, P. <i>Finance des marchés</i>, Dunod, chapitres 4 et 5 (cité par le cours).",
         "Bollerslev, T. (1986). Generalized Autoregressive Conditional Heteroskedasticity. <i>Journal of Econometrics</i>, 31(3), 307-327.",
         "Hochreiter, S. et Schmidhuber, J. (1997). Long Short-Term Memory. <i>Neural Computation</i>, 9(8), 1735-1780.",
         "J.P. Morgan / Reuters (1996). <i>RiskMetrics — Technical Document</i>, 4<super>e</super> éd.",
         "ENSA Safi, cours <i>Produits dérivés et théorie du portefeuille</i>, chapitre 2, et guide des projets intégrateurs."]
-st += [KeepTogether([H("7. Références")] + [Paragraph(f"[{i}] {r}", S["r"]) for i, r in enumerate(refs, 1)])]
+st += [KeepTogether([H("8. Références")] + [Paragraph(f"[{i}] {r}", S["r"]) for i, r in enumerate(refs, 1)])]
 
 out = str(pathlib.Path(__file__).resolve().parent.parent / "docs" / "fiche_lecture.pdf")
 SimpleDocTemplate(out, pagesize=A4, leftMargin=2 * cm, rightMargin=2 * cm, topMargin=1.8 * cm, bottomMargin=2 * cm,

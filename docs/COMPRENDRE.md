@@ -91,7 +91,7 @@ Volatilité historique : `σ = écart-type(r_t) × √252`, avec `r_t = ln(S_t/S
 
 ## 7. Odoo : ce qu'il faut comprendre avant de coder (S3 à S5)
 
-**Ce que contient déjà `cours.option` (TP 0)** : `name`, le type call/put, `S_T` (prix du sous-jacent à l'échéance), `K`, `premium`, `payoff`, `profit`. Il sert à calculer un payoff, pas un prix Black-Scholes. Il manque donc `spot` (le S d'aujourd'hui), `maturite`, `taux` et `volatilite`, que le code du guide suppose présents. Nous les ajouterons avec `_inherit = 'cours.option'`, sans toucher au modèle d'origine.
+**Ce que contient déjà `cours.option` (notre TP 0, dans `odoo_addons/cours_derives`)** : champs saisis `type`, `position`, `quantity`, `S0` (prix d'aujourd'hui), `S_T` (prix à l'échéance), `K`, `premium`, `r`, `T`, `sigma` ; champs calculés `payoff`, `profit`, `break_even`, `moneyness` (à partir de `S_T`) et `bs_price` (à partir de `S0`, put par parité). Toutes les entrées de Black-Scholes existent donc : nous ajoutons seulement les Grecques, `sigma_lstm` et `bs_price_lstm`, avec `_inherit = 'cours.option'`, sans toucher au modèle d'origine. Le guide les appelle `spot`, `strike`, `maturite`, `taux`, `volatilite` : on garde les noms du TP 0 pour éviter les doublons.
 
 **Un champ calculé** (`compute=`, `store=True`, `@api.depends`) se recalcule dès qu'un champ listé dans `depends` change, et reste stocké en base : c'est ce qui permet de trier, filtrer et regrouper. Oublier un champ dans `@api.depends` donne un résultat périmé sans message d'erreur.
 
@@ -99,7 +99,7 @@ Volatilité historique : `σ = écart-type(r_t) × √252`, avec `r_t = ln(S_t/S
 
 **Le conteneur Odoo n'a pas nos bibliothèques.** D'où `pricing.py` sans SciPy. Pour le LSTM, TensorFlow ne sera pas dans l'image : on entraîne hors Odoo, et Odoo ne fait que de l'inférence via un modèle exporté ou un petit service. Décision à prendre en S4.
 
-**Un nom de champ à trancher en lisant notre module** : le cours emploie `type`, le TP `option_type`, et le guide `type`, `strike`, `maturite`, `taux`, `volatilite`. Les groupes 4 et 7 étendent aussi `cours.option` : on se met d'accord avec eux avant de nommer.
+**Noms de champs (décision S1)** : on garde ceux de notre module (`type`, `S0`, `K`, `T`, `r`, `sigma`), voir `CONVENTIONS.md`. Les groupes 4 et 7 étendent aussi `cours.option` : on leur communique ce choix.
 
 ## 8. Le LSTM de volatilité : ce que le guide ne dit pas
 

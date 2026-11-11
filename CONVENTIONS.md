@@ -19,15 +19,19 @@ Notre pricer est réutilisé par les groupes 4, 5, 6, 7 et 9. Ces conventions so
 | Graine aléatoire | `numpy.random.default_rng(42)` |
 | Découpage de séries | toujours chronologique, jamais aléatoire ; normalisation apprise sur le train seul |
 
-## Champs Odoo de l'extension de `cours.option` (à confirmer avec les groupes 4 et 7)
+## Champs Odoo de `cours.option` (décision S1 du 11/11/2026, à communiquer aux groupes 4 et 7)
 
-Le cours utilise `type`, le TP `option_type`, le guide `type`, `strike`, `maturite`, `taux`, `volatilite`. Nom retenu pour l'instant : celui du guide. À figer après lecture du module `cours_derives` du groupe.
+Notre module `cours_derives` (TP 0, dans `odoo_addons/`) contient déjà les entrées de Black-Scholes. **On garde ses noms** : pas de doublon `spot`/`S0` ni `strike`/`K`. Le guide écrit `spot`, `strike`, `maturite`, `taux`, `volatilite` ; l'énoncé du TP `option_type` : ce sont les mêmes grandeurs.
 
-| Champ | Contenu | Unité |
-|---|---|---|
-| `spot` | prix du sous-jacent aujourd'hui (≠ `S_T` du TP) | devise |
-| `strike` | prix d'exercice (équivalent du `K` du TP) | devise |
-| `maturite` | durée restante | années |
-| `taux` | taux sans risque continu | décimal |
-| `volatilite` | volatilité annualisée | décimal |
-| `greeks_delta`, `greeks_gamma`, `greeks_vega`, `greeks_theta`, `greeks_rho` | Grecques, calculées et stockées | unités ci-dessus |
+| Champ | Contenu | Unité | Origine |
+|---|---|---|---|
+| `type` | `'call'` ou `'put'` | — | TP 0 |
+| `S0` | prix du sous-jacent **aujourd'hui** (sert au prix) | devise | TP 0 |
+| `S_T` | prix à l'échéance (sert seulement au payoff) | devise | TP 0 |
+| `K` | prix d'exercice | devise | TP 0 |
+| `T` | durée restante | années | TP 0 |
+| `r` | taux sans risque continu | décimal | TP 0 |
+| `sigma` | volatilité annualisée | décimal | TP 0 |
+| `bs_price` | prix Black-Scholes (put par parité) | devise | TP 0 |
+| `greeks_delta`, `greeks_gamma`, `greeks_vega`, `greeks_theta`, `greeks_rho` | Grecques, calculées et stockées | unités ci-dessus | groupe 1 |
+| `sigma_lstm`, `bs_price_lstm` | volatilité prédite et prix correspondant | décimal, devise | groupe 1 |

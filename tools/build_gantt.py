@@ -37,7 +37,20 @@ T = [
     ("Démonstration : préparation", "Rapport", "Tous", 6, 7),
     ("Gantt réalisé + rapport final", "Rapport", "Chef de projet", 7, 7),
 ]
-MILESTONES = [(1, "Mini-compte rendu S1"), (4, "Rotation des rôles"), (7, "Soutenance")]
+# Responsables proposés (à valider en séance) ; rotation obligatoire des rôles à la fin de la S4
+R1 = {"Chef de projet": "Wilfried", "Quant / Data": "Assia", "Dév. Odoo": "Fatima-ezzahraa",
+      "Ingénieur IA": "Hiba", "Qualité & intégration": "Zineb", "Tous": "Tous"}
+R2 = {"Chef de projet": "Zineb", "Quant / Data": "Wilfried", "Dév. Odoo": "Hiba",
+      "Ingénieur IA": "Assia", "Qualité & intégration": "Fatima-ezzahraa", "Tous": "Tous"}
+
+
+def who(role, start):
+    return (R1 if start <= 4 else R2)[role]
+
+
+# un mini-compte rendu chaque semaine, plus ces jalons
+MILESTONES = [(1, "Fiche de lecture"), (4, "Rotation des rôles"), (6, "Rapport à 80 %"), (7, "Soutenance")]
+EXTRA = dict(MILESTONES)
 
 # ---------- PNG ----------
 fig, ax = plt.subplots(figsize=(14, 8.6), dpi=150)
@@ -45,7 +58,7 @@ n = len(T)
 for i, (name, ph, role, a, b) in enumerate(T):
     y = n - 1 - i
     ax.barh(y, b - a + 1, left=a - 1, height=0.62, color=PH[ph], edgecolor="white")
-    ax.text(b + 0.06, y, role, va="center", fontsize=7.5, color="#555555")
+    ax.text(b + 0.06, y, f"{who(role, a)} ({role})", va="center", fontsize=7.5, color="#555555")
 ax.set_yticks(range(n))
 ax.set_yticklabels([t[0] for t in T][::-1], fontsize=8.5)
 ax.set_xlim(0, 8.3)
@@ -53,16 +66,20 @@ ax.set_xticks([w + 0.5 for w in range(7)])
 ax.set_xticklabels([f"S{w + 1}\n{DATES[w]}" for w in range(7)], fontsize=8.5)
 for w in range(8):
     ax.axvline(w, color="#DDDDDD", lw=0.8, zorder=0)
-ax.set_ylim(-1.9, n - 0.3)
-for wk, label in MILESTONES:
+ax.set_ylim(-2.7, n - 0.3)
+for wk in range(1, 8):
     ax.plot(wk - 0.5, -1.2, marker="D", color="#222222", markersize=7, clip_on=False)
-    ax.text(wk - 0.5, -1.75, label, ha="center", fontsize=7.5, color="#222222")
+    ax.text(wk - 0.5, -1.6, "Mini-CR" + ("\n" + EXTRA[wk] if wk in EXTRA else ""), ha="center", va="top",
+            fontsize=7.5, color="#222222")
+ax.axvline(4, color="#D55E00", ls="--", lw=1.3, zorder=1)
+ax.text(4.05, n - 0.6, "rotation des rôles", color="#D55E00", fontsize=7.5)
 ax.tick_params(axis="y", length=0)
 for s in ("top", "right", "left"):
     ax.spines[s].set_visible(False)
 ax.set_title("Gantt prévisionnel — Groupe 1 · Pricer d'Options & Grecques (version S1)", fontsize=12, fontweight="bold",
              loc="left", pad=28)
-ax.text(0, 1.018, "Dates indicatives : une séance par semaine à partir du 11/11/2026, à confirmer. Rôles proposés, à attribuer.",
+ax.text(0, 1.018, "Dates indicatives : une séance par semaine à partir du 11/11/2026, à confirmer. "
+        "Responsables proposés (rotation à la fin de la S4), à valider en séance. ◆ = jalon.",
         transform=ax.transAxes, fontsize=8, color="#555555")
 ax.legend(handles=[Patch(color=c, label=k) for k, c in PH.items()], loc="upper right", ncol=3, fontsize=8, frameon=False,
           bbox_to_anchor=(1.0, 1.0))
@@ -76,10 +93,11 @@ ws = wb.active
 ws.title = "Gantt"
 ws["A1"] = "Gantt — Groupe 1 · Pricer d'Options & Grecques"
 ws["A1"].font = Font(bold=True, size=13)
-ws["A2"] = "Renseigner Début/Fin réels (colonnes F, G) et le statut ; les barres se mettent à jour. Dates indicatives : S1 = 11/11/2026."
-heads = ["Tâche", "Phase", "Rôle", "Début prévu (S)", "Fin prévue (S)", "Début réel (S)", "Fin réelle (S)", "Statut"]
+ws["A2"] = "Renseigner Début/Fin réels (colonnes H, I) et le statut ; les barres se mettent à jour. Dates indicatives : S1 = 11/11/2026."
+heads = ["Tâche", "Phase", "Rôle", "Responsable", "Début prévu (S)", "Fin prévue (S)", "Durée (sem.)", "Début réel (S)",
+         "Fin réelle (S)", "Statut"]
 hr = 4
-PL, RL = 10, 18     # première colonne de la grille prévue / réelle (J, R)
+PL, RL = 12, 20     # première colonne de la grille prévue / réelle (L, T)
 thin = Side(style="thin", color="BBBBBB")
 hdr_fill = PatternFill("solid", fgColor="0B3C5D")
 for c, h in enumerate(heads, 1):
@@ -98,18 +116,18 @@ dv = DataValidation(type="list", formula1='"À faire,En cours,Terminé"', allow_
 ws.add_data_validation(dv)
 for i, (name, ph, role, a, b) in enumerate(T):
     r = hr + 1 + i
-    for c, v in enumerate([name, ph, role, a, b, None, None, "À faire"], 1):
+    for c, v in enumerate([name, ph, role, who(role, a), a, b, f"=F{r}-E{r}+1", None, None, "À faire"], 1):
         cell = ws.cell(r, c, v)
         cell.border = Border(bottom=thin)
-        if c in (4, 5, 6, 7):
+        if c in (5, 6, 7, 8, 9):
             cell.alignment = Alignment(horizontal="center")
     ws.cell(r, 2).fill = PatternFill("solid", fgColor=PH[ph].lstrip("#"))
     ws.cell(r, 2).font = Font(color="FFFFFF", bold=True)
-    dv.add(ws.cell(r, 8))
+    dv.add(ws.cell(r, 10))
     for w in range(1, 8):
         col_p, col_r = get_column_letter(PL + w - 1), get_column_letter(RL + w - 1)
-        ws.cell(r, PL + w - 1, f'=IF(AND({col_p}${hr}>=$D{r},{col_p}${hr}<=$E{r}),"■","")')
-        ws.cell(r, RL + w - 1, f'=IF(AND($F{r}<>"",{col_r}${hr}>=$F{r},{col_r}${hr}<=$G{r}),"■","")')
+        ws.cell(r, PL + w - 1, f'=IF(AND({col_p}${hr}>=$E{r},{col_p}${hr}<=$F{r}),"■","")')
+        ws.cell(r, RL + w - 1, f'=IF(AND($H{r}<>"",{col_r}${hr}>=$H{r},{col_r}${hr}<=$I{r}),"■","")')
 last = hr + len(T)
 rng_p = f"{get_column_letter(PL)}{hr + 1}:{get_column_letter(PL + 6)}{last}"
 rng_r = f"{get_column_letter(RL)}{hr + 1}:{get_column_letter(RL + 6)}{last}"
@@ -117,17 +135,25 @@ ws.conditional_formatting.add(rng_p, FormulaRule(formula=[f'{get_column_letter(P
                               fill=PatternFill("solid", bgColor="0072B2", fgColor="0072B2"), font=Font(color="0072B2")))
 ws.conditional_formatting.add(rng_r, FormulaRule(formula=[f'{get_column_letter(RL)}{hr + 1}="■"'],
                               fill=PatternFill("solid", bgColor="009E73", fgColor="009E73"), font=Font(color="009E73")))
-for col, wd in zip("ABCDEFGH", (42, 13, 22, 9, 9, 9, 9, 11)):
+for col, wd in zip("ABCDEFGHIJ", (42, 13, 22, 16, 9, 9, 8, 9, 9, 11)):
     ws.column_dimensions[col].width = wd
-ws.column_dimensions["I"].width = 3
+ws.column_dimensions["K"].width = 3
 for w in range(7):
     ws.column_dimensions[get_column_letter(PL + w)].width = 5
     ws.column_dimensions[get_column_letter(RL + w)].width = 5
 ws.row_dimensions[hr].height = 32
 ws.freeze_panes = ws.cell(hr + 1, 2)
 ws2 = wb.create_sheet("Jalons")
-for r, row in enumerate([("Semaine", "Jalon")] + [(f"S{w}", l) for w, l in MILESTONES], 1):
-    ws2.append(row)
-ws2.column_dimensions["B"].width = 28
+ws2.append(("Semaine", "Jalon"))
+for w in range(1, 8):
+    ws2.append((f"S{w}", "Mini-compte rendu (10 min)" + (" ; " + EXTRA[w] if w in EXTRA else "")))
+ws3 = wb.create_sheet("Rôles")
+ws3.append(("Rôle", "S1 à S4", "S5 à S7 (après rotation)"))
+for role in R1:
+    if role != "Tous":
+        ws3.append((role, R1[role], R2[role]))
+for col, wd in zip("ABC", (24, 18, 24)):
+    ws3.column_dimensions[col].width = wd
+ws2.column_dimensions["B"].width = 46
 wb.save(OUT + "gantt_source.xlsx")
 print("xlsx ok")

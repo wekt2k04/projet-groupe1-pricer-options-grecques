@@ -9,7 +9,8 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   web:
-    image: odoo:17.0
+    build: {context: ., dockerfile: Dockerfile.odoo}   # odoo:17.0 + numpy (import de src/pricing.py)
+    image: groupe1-odoo:17.0
     depends_on: [db]
     ports: ["8069:8069"]       # si le port est pris : "8070:8069"
     environment:

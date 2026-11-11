@@ -1,7 +1,7 @@
 
 # Assia SADOUR (IDIA3)
 
-- GitHub : [ton identifiant GitHub]
+- GitHub : as7ia
 - Rôle S1 à S4 : quant / data
 - Rôle S5 à S7 : à définir après la rotation
 - Ce que je fais en S2 : notebooks `01_donnees` et `02_modele_python` avec le chef de projet, calcul de la volatilité historique et implémentation de Black-Scholes et des cinq Grecques.

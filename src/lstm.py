@@ -7,7 +7,7 @@
 # Modèle envisagé : réseau de neurones LSTM .
 #
 # Étapes prévues :
-# 1. Utiliser les données fournies.
+# 1. Utiliser les données fournies .
 # 2. Normaliser les données d'entraînement.
 # 3. Construire des séquences temporelles de 30 observations.
 # 4. Entraîner et évaluer le modèle LSTM.

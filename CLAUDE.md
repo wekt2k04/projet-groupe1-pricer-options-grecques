@@ -103,12 +103,12 @@ Fournis par Wilfried, **hors dépôt** : `chap2.pdf` (cours), `TD2_Produits_deri
 |---|---|---|
 | `src/pricing.py` | `N`, `phi`, `bs_price`, `greeks`, `put_call_parity_gap` ; scalaires et tableaux NumPy | fait, testé |
 | `src/data.py` | `load_prices_info` (yfinance puis CSV de repli, renvoie aussi la source `"yfinance"` ou `"csv"`), `load_prices` (même contrat qu'en S1), `simulate_gbm_prices` (graine 42), `log_returns`, `historical_volatility`, `rolling_realized_vol` | fait, testé hors réseau |
-| `src/ml.py` | entraînement / inférence du LSTM | **absent** (S3-S4) |
+| `src/ml.py` | jeux de données V0/V1, références (persistance, EWMA, GARCH), métriques RMSE/QLIKE, LSTM en NumPy, export/inférence | prêt sur `prep/s3` (Hiba) |
 | `tests/test_pricing.py` | 20 tests pytest | fait, verts |
 | `tests/test_data.py` | 5 tests sans réseau (faux module yfinance) : source yfinance, repli CSV, erreur sans CSV, contrat de `load_prices`, rendements et volatilités | fait, verts |
 | `pytest.ini` | `pythonpath = src` : les tests importent `from pricing import …` ; Odoo importe aussi `pricing` via `PYTHONPATH` | fait |
-| `odoo_addons/cours_derives/` | README seulement | **à remplir** (S3) |
-| `notebooks/` | vide (`.gitkeep`) | à faire (S2 : `01_donnees`, `02_modele_python` ; S3-S4 : `03_ia`) |
+| extensions de `cours_derives` | `models/option_greeks.py` (S3), `option_point.py` (S4), `vol_prediction.py` (S5), vues, droits, `tests/` (13 tests Odoo) | prêtes sur `prep/s3` à `prep/s5`, **jamais exécutées dans Odoo** |
+| `notebooks/` | `01_donnees`, `02_modele_python` (`prep/s2`), `03_ia` (`prep/s4`) | prêts ; exécutés par Claude sur données **simulées**, à ré-exécuter sur données réelles |
 | `docs/fiche_lecture.pdf` | fiche de lecture Phase 0, 2 pages : formules, Grecques, volatilité, LSTM, **lien avec le TP 0**, **algorithme Python**, 6 références, noms des 5 membres | fait (11/11) |
 | `docs/gantt_previsionnel.png`, `docs/gantt_source.xlsx` | Gantt S1-S7, 21 tâches, 6 phases, jalons ; xlsx avec grille Prévu et grille Réalisé pilotées par des formules | fait |
 | `docs/gantt_realise.png` | Gantt réalisé (**livrable final obligatoire**) | à produire en S4 puis S7 |
@@ -148,6 +148,7 @@ Tests : valeur connue ; identité avec le code du guide recopié (rel 1e-12) ; p
 - [x] §9 réécrit en étapes atomiques (identifiant, responsable, commandes, preuve, repli).
 - [x] `docs/MATIERE.md` : la matière dans son ensemble, tirée du chapitre 2, des TD 2 et 3, du TP Odoo et du notebook de révision.
 - [x] S2-03 en avance : `load_prices_info` et `tests/test_data.py` ; 25 tests verts.
+- [x] **Travail S2 à S7 préparé le 11/11/2026** sur `prep/s2` … `prep/s7` (§9.10) : notebooks, extension Odoo, LSTM et export, Gantt réalisé, rapport en sections, plan de soutenance ; 34 tests pytest verts sur `prep/s5`.
 
 **Non vérifié (à ne pas affirmer comme acquis)**
 - [ ] Démarrage réel d'Odoo avec ce `docker-compose.yml` ; import de `pricing` via `PYTHONPATH=/mnt/finance_src` dans le conteneur.
@@ -155,9 +156,8 @@ Tests : valeur connue ; identité avec le code du guide recopié (rel 1e-12) ; p
 - [ ] Le fichier xlsx dans Excel / LibreOffice (formules `IF/AND` relues, non recalculées).
 
 **Pas encore fait**
-- [ ] Réglages du dépôt `wekt2k04/projet-groupe1-pricer-options-grecques` (S1-02, S1-05) : inviter les 4 autres membres (Settings → Collaborators), ajouter les topics et, si l'offre GitHub le permet, protéger `main` (pull request + 1 approbation). Le premier commit est poussé (S1-03) ; clone de Claude : `/home/claude/projet-groupe1-pricer-options-grecques`.
-- [ ] Notebooks, `src/ml.py`, module Odoo, vues, bouton, LSTM, rapport, Gantt réalisé.
-- [ ] Noms et rôles des membres (README et Gantt).
+- [ ] Protection de `main` (des commits ont été poussés directement le 11/11) ; inviter Zineb (`elamrani-zineb`) ; relire et fusionner les PR des fiches membres.
+- [ ] Intégration semaine par semaine du travail préparé, par chaque membre à son nom (§9.10).
 - [ ] Mini-compte rendu au format du professeur.
 
 ## 9. Plan d'exécution — étapes atomiques
@@ -345,6 +345,21 @@ Si `gh pr create` est bloqué : `gh api repos/wekt2k04/projet-groupe1-pricer-opt
 
 **P6 — Terminer proprement une session Claude** : mettre à jour §8 et les cases de §9, ajouter une ligne au §12, relancer `pytest`, livrer le tout par une PR (P2).
 
+### 9.10 Travail préparé d'avance : branches `prep/sN`
+
+Tout le travail S2 à S7 a été préparé par Claude le 11/11/2026, à la demande de Wilfried, sur six branches empilées (`prep/s2` ⊂ `prep/s3` ⊂ … ⊂ `prep/s7`, un commit chacune). **Elles ne sont jamais fusionnées.** Chaque semaine, chaque membre récupère **ses** fichiers dans sa propre branche (`git checkout origin/prep/sN -- <fichiers>`), les exécute chez lui, les commite **à son nom** et ouvre sa PR (méthode : `docs/semaines/README.md` ; répartition, commandes et « À comprendre » : `docs/semaines/SN.md` sur la branche `prep/sN`). Claude ne commite jamais sous l'identité d'un autre membre ; il ne réécrit pas les branches `prep/*` une fois qu'un membre a commencé à en récupérer des fichiers, il ajoute un commit.
+
+| Branche | Contenu | Vérifié par Claude |
+|---|---|---|
+| `prep/s2` | notebooks 01 et 02, figures, fiche, mini-CR S2 | exécutés (données GBM simulées, étiquetées) ; 25 tests |
+| `prep/s3` | `option_greeks.py` (Grecques, `sigma_lstm`, `bs_price_lstm`, Delta du portefeuille), vues, tests Odoo, `src/ml.py`, `tests/test_ml.py` | syntaxe Python et XML ; 33 tests pytest dont LSTM NumPy = Keras |
+| `prep/s4` | `option_point.py` + graphique Delta(S), notebook 03 (V0, V1, références, export `models/lstm_vol.npz`), `tools/build_gantt_realise.py` | notebook exécuté (données GARCH simulées) ; export NumPy = Keras |
+| `prep/s5` | `vol_prediction.py` (bouton « Prédire la volatilité », `cours.vol.prediction`), montage `./models` dans Docker, tests d'intégration | syntaxe ; 34 tests pytest ; YAML du compose |
+| `prep/s6` | rapport en 7 sections (`docs/rapport/`), une par casquette, emplacements `⟦…⟧` pour les chiffres réels | — |
+| `prep/s7` | plan de soutenance (déroulé, script de démo, plan B, questions, livrables) | — |
+
+**Non vérifié** : aucun code Odoo de S3 à S5 n'a tourné (pas de Docker dans l'environnement de Claude) ; la mise à jour du module par Fatima-ezzahraa en S3 est le premier vrai test. Les résultats du LSTM à présenter sont ceux des données réelles, pas ceux des branches.
+
 ## 10. Pièges connus
 
 - **Cible du LSTM** : la volatilité glissante sur 5 jours au jour t+1 partage 4 rendements sur 5 avec celle du jour t ; la persistance bat ou égale un LSTM par construction. Avec 2 ans de cotations (~500 points, ~330 séquences d'entraînement à 70 %), l'échantillon est trop petit. Si le LSTM perd, le dire.
@@ -374,6 +389,7 @@ Si `gh pr create` est bloqué : `gh api repos/wekt2k04/projet-groupe1-pricer-opt
 ## 12. Journal
 
 - **2026-11-10** — Analyse du guide (30 pages, 10 projets) et PDF anonyme de retranscription + analyse diffusé à la classe (voir §13). Réception des supports de cours : le TP 0 `cours_derives` n'a pas les champs que suppose le code Odoo du guide. Wilfried se déclare groupe 1. Construction du lot S1 (code, 20 tests, documents, archive). Rédaction de ce fichier.
+- **2026-11-11** — Travail S2 à S7 préparé sur `prep/s2` … `prep/s7` (§9.10), poussé ; rien n'est fusionné dans `main`.
 - **2026-11-10 (nuit, suite)** — Ajout du §14 « Guide du membre » ; règles de §11 scindées selon l'utilisateur de la session (Wilfried ou autre membre) ; P2 et P6 rendus valables pour tous ; fin de l'archive zip, le dépôt fait foi.
 - **2026-11-10 (nuit)** — §9 réécrit en étapes atomiques ; correction : le premier commit va sur `main` (dépôt vide, pas de PR possible) ; `.gitignore` corrigé pour versionner `data/*_fallback.csv` ; `docs/MATIERE.md` rédigé ; S2-03 faite (25 tests). Premier commit poussé sur `main` par Claude à la demande de Wilfried (S1-03), puis auteur réécrit en Wilfried (adresse anonyme GitHub), lignes d'attribution à Claude retirées à sa demande, repoussé avec `--force-with-lease`, avant toute invitation.
 - **2026-11-10 (soir)** — Wilfried crée le dépôt GitHub privé `wekt2k04/projet-groupe1-pricer-options-grecques` (vide, sans README ni licence) ; rattaché à la session de Claude avec accès `push`. Aucun commit poussé.

@@ -6,7 +6,7 @@ Nous construisons un outil qui valorise une option européenne avec Black-Schole
 
 **À lire en premier : [`docs/MATIERE.md`](docs/MATIERE.md)** — la matière dans son ensemble (dérivés, binomial, Black-Scholes, volatilité, portefeuille, CAPM, Odoo, IA, carte des 10 projets) ; **puis [`docs/COMPRENDRE.md`](docs/COMPRENDRE.md)** — ce que chaque membre doit savoir expliquer sur notre projet, avec les chiffres de référence et les questions de soutenance probables. Les unités communes sont dans [`CONVENTIONS.md`](CONVENTIONS.md).
 
-**Membre du groupe : ta feuille de route est [`CLAUDE.md`](CLAUDE.md) §14** (installation, règles notées, ton rôle, ta prochaine tâche, façon de contribuer) ; le plan étape par étape est au §9.
+**Membre du groupe : ta feuille de route est [`CLAUDE.md`](CLAUDE.md) §14** (installation, règles notées, ton rôle, ta prochaine tâche, façon de contribuer) ; le plan étape par étape est au §9. **Travail de la semaine** : méthode dans [`docs/semaines/README.md`](docs/semaines/README.md), fiche et fichiers sur la branche `prep/s<n>`.
 
 ## Démarrage rapide
 

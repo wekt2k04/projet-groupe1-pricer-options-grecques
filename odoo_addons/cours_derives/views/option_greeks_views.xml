@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Groupe 1, Projet 1 : Grecques dans les vues de cours.option (héritage des vues du TP 0) -->
+<odoo>
+    <record id="view_cours_option_form_greeks" model="ir.ui.view">
+        <field name="name">cours.option.form.greeks</field>
+        <field name="model">cours.option</field>
+        <field name="inherit_id" ref="view_cours_option_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_calculer" string="Calculer" type="object" class="btn-primary"/>
+                </header>
+            </xpath>
+            <xpath expr="//group[@string='Résultats']" position="after">
+                <group string="Résultats / Grecques">
+                    <group>
+                        <field name="greeks_delta"/>
+                        <field name="greeks_gamma"/>
+                        <field name="greeks_vega"/>
+                    </group>
+                    <group>
+                        <field name="greeks_theta"/>
+                        <field name="greeks_rho"/>
+                        <field name="sigma_lstm"/>
+                        <field name="bs_price_lstm"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_cours_option_tree_greeks" model="ir.ui.view">
+        <field name="name">cours.option.tree.greeks</field>
+        <field name="model">cours.option</field>
+        <field name="inherit_id" ref="view_cours_option_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="greeks_delta" optional="show"/>
+                <field name="greeks_gamma" optional="show"/>
+                <field name="greeks_vega" optional="hide"/>
+                <field name="greeks_theta" optional="hide"/>
+                <field name="greeks_rho" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

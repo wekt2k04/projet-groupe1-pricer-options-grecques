@@ -17,6 +17,7 @@ Module pédagogique du chapitre 2 (ENSA Safi, GIIA) :
     'data': [
         'security/ir.model.access.csv',
         'views/derives_views.xml',
+        'views/option_greeks_views.xml',
         'views/portefeuille_views.xml',
         'views/menus.xml',
     ],

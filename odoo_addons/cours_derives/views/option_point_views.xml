@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Groupe 1, Projet 1 : vue graphique Delta(S) et bouton d'accès depuis l'option -->
+<odoo>
+    <record id="view_cours_option_point_graph" model="ir.ui.view">
+        <field name="name">cours.option.point.graph</field>
+        <field name="model">cours.option.point</field>
+        <field name="arch" type="xml">
+            <graph string="Delta en fonction du spot (en % du strike)" type="line">
+                <field name="moneyness_pct" type="row"/>
+                <field name="delta" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_cours_option_point_tree" model="ir.ui.view">
+        <field name="name">cours.option.point.tree</field>
+        <field name="model">cours.option.point</field>
+        <field name="arch" type="xml">
+            <tree create="false">
+                <field name="option_id"/>
+                <field name="moneyness_pct"/>
+                <field name="spot"/>
+                <field name="delta"/>
+                <field name="gamma"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_cours_option_form_delta" model="ir.ui.view">
+        <field name="name">cours.option.form.delta</field>
+        <field name="model">cours.option</field>
+        <field name="inherit_id" ref="view_cours_option_form_greeks"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_voir_delta" string="Courbe Delta(S)" type="object"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

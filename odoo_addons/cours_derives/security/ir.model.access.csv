@@ -5,3 +5,4 @@ access_cours_portfolio,cours.portfolio,model_cours_portfolio,base.group_user,1,1
 access_cours_markowitz,cours.markowitz,model_cours_markowitz,base.group_user,1,1,1,1
 access_cours_capm,cours.capm,model_cours_capm,base.group_user,1,1,1,1
 access_cours_volatility,cours.volatility,model_cours_volatility,base.group_user,1,1,1,1
+access_cours_option_point,cours.option.point,model_cours_option_point,base.group_user,1,1,1,1

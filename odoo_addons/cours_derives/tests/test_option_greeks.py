@@ -61,3 +61,16 @@ class TestOptionGreeks(TransactionCase):
         self._option(portfolio_id=pf.id, position="long", quantity=2.0)
         self._option(portfolio_id=pf.id, type="put", position="short", quantity=1.0)
         self.assertAlmostEqual(pf.delta_total, 2 * 0.6368 + 0.3632, places=3)
+
+    def test_courbe_delta(self):
+        o = self._option()
+        o.action_calculer()
+        self.assertEqual(len(o.point_ids), 21)
+        a_la_monnaie = o.point_ids.filtered(lambda p: p.moneyness_pct == 100)
+        self.assertAlmostEqual(a_la_monnaie.delta, 0.6368, places=3)
+        deltas = o.point_ids.sorted("moneyness_pct").mapped("delta")
+        self.assertEqual(deltas, sorted(deltas))          # Delta du call croissant avec le spot
+
+    def test_action_voir_delta(self):
+        action = self._option().action_voir_delta()
+        self.assertEqual(action["res_model"], "cours.option.point")

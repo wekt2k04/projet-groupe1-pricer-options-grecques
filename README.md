@@ -51,7 +51,7 @@ Un commit par semaine et par membre au minimum, avec le prénom dans le message 
 | SADOUR Assia (IDIA3) | `as7ia` | Quant / data | Ingénieur IA |
 | EL ANKOUD Fatima-ezzahraa (GINF3) | `fatimaezzahraaelankoud` | Développeuse Odoo | Qualité et intégration |
 | BOULHAIL Hiba (IDIA3) | `Hiba-2004` | Ingénieure IA | Développeuse Odoo (branche son modèle derrière le bouton) |
-| ELAMRANI Zineb (GINF3) | à confirmer | Qualité et intégration | Cheffe de projet (rapport) |
+| ELAMRANI Zineb (GINF3) | `elamrani-zineb` | Qualité et intégration | Cheffe de projet (rapport) |
 
 Répartition **proposée, à valider en séance** ; chaque membre confirme sa ligne par son premier commit (`docs/membres/`). Rotation obligatoire à la fin de la S4 (guide, §3.1).
 

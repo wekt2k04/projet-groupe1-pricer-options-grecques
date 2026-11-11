@@ -59,7 +59,7 @@ Répartition **proposée, à valider en séance** ; chaque membre confirme sa li
 
 | Semaine | Livrable attendu | État |
 |---|---|---|
-| S1 | dépôt, Docker, source des données, fiche de lecture, schéma de base, Gantt prévisionnel | fait ; reste : invitations et premier commit de chaque membre |
+| S1 | dépôt, Docker, source des données, fiche de lecture, schéma de base, Gantt prévisionnel | fait ✓|
 | S2 | prototype Python, tests, notebook | à faire |
 | S3 | extension Odoo de `cours.option` | à faire |
 | S4 | vues Odoo, LSTM entraîné, rotation des rôles, Gantt mis à jour | à faire |

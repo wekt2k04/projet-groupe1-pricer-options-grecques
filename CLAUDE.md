@@ -72,8 +72,8 @@ Mots-clés du guide : Black-Scholes · Grecques · volatilité historique · LST
 
 Fournis par Wilfried, **hors dépôt** : `chap2.pdf` (cours), `TD2_Produits_derives_Enonces.pdf`, `TP_Chap2_Odoo.pdf`, `TP_Chap2_Python.pdf`, et un notebook de révision `Finance_Derives_Portefeuille_Odoo_cours_complet.ipynb` (cours, TD2 et TD3 résolus).
 
-- **Le TP 0 est le TP Chap. 2 Odoo** : module `cours_derives` avec `cours.forward` (`name`, `S0`, `r`, `T`, `F0` calculé), `cours.option` (`name`, `option_type`, `S_T`, `K`, `premium`, `payoff`, `profit`) et `cours.portfolio` (deux actifs : `mu_A`, `sigma_A`, `mu_B`, `sigma_B`, `rho`, `w_A`, `w_B`, `exp_return`, `sigma_p`). Le cours (chap. 2 §2.8.2) nomme le champ `type` ; le TP `option_type`. La parité y est une méthode `put_par_parite(C, S0, K, r, T)`, pas un wizard.
-- **Conséquence centrale** : `cours.option` n'a ni `spot`, ni `maturite`, ni `taux`, ni `volatilite`. `S_T` est le prix à l'échéance (pour le payoff), pas le spot d'aujourd'hui. Le code Odoo du guide suppose ces champs : **il faut les ajouter**. « Ajouter volatilité et prix si absents » sous-estime le travail.
+- **Le module réel du groupe (TP 0) est dans `odoo_addons/cours_derives/` depuis le 11/11/2026** (version de Wilfried, Odoo 17, dépend de `base`, installé sans erreur dans la base Docker `groupe1`). Modèles : `cours.forward` (`S0`, `r`, `T`, `F0` calculé, `market_price` = F coté, `arbitrage_signal`, `Vt`), `cours.option`, `cours.portfolio` (portefeuille de dérivés : `forward_ids`, `option_ids`, totaux), `cours.markowitz`, `cours.capm`, `cours.volatility` (prix en texte, `vol_hist`, `vol_ewma`, `vol_annual`).
+- **`cours.option` réel** : saisis `type` (`call`/`put`), `position` (`long`/`short`), `quantity`, `S0`, `S_T`, `K`, `premium`, `r`, `T`, `sigma` ; calculés `payoff`, `profit`, `break_even`, `moneyness` (avec `S_T`) et `bs_price` (avec `S0`, put par parité, `_norm_cdf` via `math.erf`) ; contrainte `_check_params` (T > 0, σ ≥ 0). **Conséquence** : toutes les entrées de Black-Scholes existent déjà ; on ajoute seulement les Grecques, `sigma_lstm`, `bs_price_lstm` (et `delta_total` sur `cours.portfolio`). L'énoncé du TP (`option_type`, sans `S0` ni `sigma`) décrit une version plus pauvre : ne pas s'y fier.
 - **Docker du TP** : `postgres:15` + `odoo:17.0`, port 8069, `./addons:/mnt/extra-addons`. Preuve d'installation attendue : capture de la page Applications avec le mode développeur. Si Odoo 18 : `<tree>` devient `<list>`.
 - **Tests du TP** : `TransactionCase` Odoo (`@tagged("post_install", "-at_install")`), lancés par `docker compose run --rm web odoo -d mabase -u cours_derives --test-tags /cours_derives --stop-after-init`. Le guide demande en plus des tests **pytest** sur le code pur (`tests/test_pricing.py`).
 - **Notebook de révision** : liste aussi `cours.markowitz`, `cours.capm`, `cours.volatility` (historique, EWMA), `cours.binomial` (TD3, champs `spot`, `strike`, `rate`, `volatility`, `maturity`). On ignore si ces modèles font partie du module réel du groupe : **demander `addons/cours_derives`**.
@@ -89,8 +89,8 @@ Fournis par Wilfried, **hors dépôt** : `chap2.pdf` (cours), `TD2_Produits_deri
 | Loi normale | `scipy.special.ndtr` si SciPy présent, sinon `math.erf` (image Odoo sans SciPy) | figé, testé à 1e-15 |
 | Cas `T = 0` ou `σ = 0` | prix = valeur intrinsèque actualisée au forward ; Grecques = limites déterministes (delta en escalier, gamma = vega = 0) ; **pas d'exception** | figé |
 | Entrées invalides | `ValueError` (`S ≤ 0`, `K ≤ 0`, `T < 0`, `σ < 0`, `kind` inconnu) ; l'appelant Odoo doit les intercepter | figé |
-| Nom des champs Odoo | celui du guide (`spot`, `strike`, `maturite`, `taux`, `volatilite`, `type`) pour l'instant | **à figer** après lecture du module réel et accord avec G4 et G7 |
-| `strike` vs `K` | `strike` alias ou champ lié à `K` existant | **à trancher** |
+| Nom des champs Odoo | ceux du module réel : `type`, `S0`, `K`, `T`, `r`, `sigma` (pas de `spot`/`strike`/`maturite`/`taux`/`volatilite`, qui feraient doublon) | **figé en S1 (11/11/2026)** ; à communiquer aux G4 et G7 |
+| `strike` vs `K` | `K` existant, pas de champ `strike` | **figé** |
 | Vue graphique Delta(S) | modèle de points (One2many créé par le bouton) ou image matplotlib en base64 | **à trancher en S3** |
 | IA dans Odoo | entraîner hors Odoo ; inférence seule (ONNX/onnxruntime via Dockerfile `FROM odoo:17`, ou petit service séparé) ; TensorFlow absent de l'image | **à trancher en S4** |
 | Cible du LSTM | cible tournée vers l'avenir, sans chevauchement ; références persistance, EWMA λ = 0,94, GARCH(1,1) (`arch`) ; RMSE et QLIKE ; historique 10 ans | proposé, à valider avec le groupe |
@@ -109,7 +109,7 @@ Fournis par Wilfried, **hors dépôt** : `chap2.pdf` (cours), `TD2_Produits_deri
 | `pytest.ini` | `pythonpath = src` : les tests importent `from pricing import …` ; Odoo importe aussi `pricing` via `PYTHONPATH` | fait |
 | `odoo_addons/cours_derives/` | README seulement | **à remplir** (S3) |
 | `notebooks/` | vide (`.gitkeep`) | à faire (S2 : `01_donnees`, `02_modele_python` ; S3-S4 : `03_ia`) |
-| `docs/fiche_lecture.pdf` | fiche de lecture Phase 0, 2 pages, 8 références | fait ; membres à compléter |
+| `docs/fiche_lecture.pdf` | fiche de lecture Phase 0, 2 pages : formules, Grecques, volatilité, LSTM, **lien avec le TP 0**, **algorithme Python**, 6 références, noms des 5 membres | fait (11/11) |
 | `docs/gantt_previsionnel.png`, `docs/gantt_source.xlsx` | Gantt S1-S7, 21 tâches, 6 phases, jalons ; xlsx avec grille Prévu et grille Réalisé pilotées par des formules | fait |
 | `docs/gantt_realise.png` | Gantt réalisé (**livrable final obligatoire**) | à produire en S4 puis S7 |
 | `docs/schema_bdd.png` | extension de `cours.option` + `cours.vol.serie` + `cours.vol.prediction` | fait (version S1) |
@@ -117,10 +117,12 @@ Fournis par Wilfried, **hors dépôt** : `chap2.pdf` (cours), `TD2_Produits_deri
 | `docs/MATIERE.md` | la matière dans son ensemble : dérivés, binomial, Black-Scholes, volatilité, portefeuille, CAPM, carte des 10 projets, Odoo, IA, formulaire, pièges ; parties « hors supports » signalées | fait |
 | `docs/mini_cr_S1.md` | brouillon du mini-compte rendu S1 (cases à cocher) | fait ; à reporter dans le modèle du professeur |
 | `docs/rapport/` | sources du rapport | vide |
-| `tools/build_fiche.py`, `tools/build_gantt.py`, `tools/schema.dot` | régénèrent les documents de `docs/` | fait |
+| `tools/build_fiche.py`, `tools/build_gantt.py`, `tools/build_schema.py` | régénèrent les documents de `docs/` (Gantt : responsables, durées, jalons, feuille « Rôles ») | fait |
+| `odoo_addons/cours_derives/` | module réel du TP 0, installé sans erreur dans la base Docker `groupe1` | fait (11/11) |
+| `Dockerfile.odoo` | `odoo:17.0` + `python3-numpy` : le module peut importer `src/pricing.py` (vérifié : 10,4506) | fait (11/11) |
 | `CONVENTIONS.md`, `README.md`, `requirements.txt`, `docker-compose.yml`, `.gitignore` | voir §5 | faits |
 
-Régénérer les documents : `python3 tools/build_fiche.py`, `python3 tools/build_gantt.py`, `dot -Tpng -Gdpi=130 tools/schema.dot -o docs/schema_bdd.png` (polices DejaVu sous `/usr/share/fonts/truetype/dejavu/`, Graphviz installé).
+Régénérer les documents : `python tools/build_fiche.py`, `python tools/build_gantt.py`, `python tools/build_schema.py` (matplotlib seul, plus besoin de Graphviz ; polices DejaVu de matplotlib si `/usr/share/fonts/truetype/dejavu/` est absent).
 
 ## 7. Contrat de `src/pricing.py`
 
@@ -245,31 +247,29 @@ Questions à poser, dans cet ordre : (1) alignement des noms de champs avec les 
 
 - [ ] **S3-01 Récupérer le module réel** — Claude réclame B2 ; copie dans `odoo_addons/cours_derives/` ; lire `__manifest__.py`, `models/`, `views/`, `security/`. Preuve : liste des champs réels de `cours.option` consignée en §4, nom exact du champ de type (`type` ou `option_type`).
 - [ ] **S3-02 Base saine avant modification** — DO. `docker compose run --rm web odoo -d mabase -i cours_derives --stop-after-init`, puis les tests existants du module. Preuve : installation sans erreur, capture du modèle d'origine.
-- [ ] **S3-03 Figer les noms de champs** — CP avec G4 et G7. Trancher `strike` (champ propre ou `related` de `K`) et le nom du type. Consigner dans §5 et `CONVENTIONS.md`, prévenir les groupes. Défaut si aucune réponse avant S3-05 : noms du guide (`spot`, `strike`, `maturite`, `taux`, `volatilite`), champ de type du module réel, `strike` en champ propre, et écrire « défaut appliqué » dans §5.
+- [x] **S3-03 Figer les noms de champs** — fait en S1 : noms du module réel (`type`, `S0`, `K`, `T`, `r`, `sigma`), consignés dans §5 et `CONVENTIONS.md`. Reste : prévenir les G4 et G7.
 - [ ] **S3-04 Modèle étendu** — DO. Fichier `models/option_bs.py`, importé dans `models/__init__.py`. Squelette **indicatif, non exécuté**, à vérifier au lancement :
   ```python
   from odoo import api, fields, models
   from odoo.exceptions import ValidationError
   from pricing import bs_price, greeks            # PYTHONPATH=/mnt/finance_src (docker-compose.yml)
 
-  class CoursOptionBS(models.Model):
-      _inherit = "cours.option"
+  class CoursOptionGreeks(models.Model):
+      _inherit = "cours.option"            # S0, K, T, r, sigma, type et bs_price existent déjà (TP 0)
       ticker = fields.Char()
-      spot = fields.Float(digits=(16, 4)); strike = fields.Float(digits=(16, 4))
-      maturite = fields.Float(digits=(16, 6), help="années")
-      taux = fields.Float(digits=(16, 6), default=0.05); volatilite = fields.Float(digits=(16, 6), default=0.20)
-      prix_bs = fields.Float(compute="_compute_bs", store=True, digits=(16, 4))
-      greeks_delta = fields.Float(compute="_compute_bs", store=True, digits=(16, 6))   # idem gamma, vega, theta, rho
+      sigma_lstm = fields.Float(digits=(16, 6), help="volatilité annualisée prédite par le LSTM")
+      bs_price_lstm = fields.Float(compute="_compute_greeks", store=True, digits=(16, 4))
+      greeks_delta = fields.Float(compute="_compute_greeks", store=True, digits=(16, 6))   # idem gamma, vega, theta, rho
 
-      @api.depends("spot", "strike", "maturite", "taux", "volatilite", "<champ_type>")
-      def _compute_bs(self):
+      @api.depends("type", "S0", "K", "T", "r", "sigma", "sigma_lstm")
+      def _compute_greeks(self):
           for rec in self:
               try:
-                  rec.prix_bs = bs_price(rec.spot, rec.strike, rec.maturite, rec.taux, rec.volatilite, rec["<champ_type>"])
-                  g = greeks(rec.spot, rec.strike, rec.maturite, rec.taux, rec.volatilite, rec["<champ_type>"])
+                  g = greeks(rec.S0, rec.K, rec.T, rec.r, rec.sigma, rec.type)
                   rec.greeks_delta = g["delta"]    # et gamma, vega, theta, rho
+                  rec.bs_price_lstm = bs_price(rec.S0, rec.K, rec.T, rec.r, rec.sigma_lstm, rec.type) if rec.sigma_lstm else 0.0
               except ValueError:                   # entrée invalide : ne jamais faire planter le formulaire
-                  rec.prix_bs = rec.greeks_delta = 0.0
+                  rec.greeks_delta = rec.bs_price_lstm = 0.0
 
       def action_calculer(self):
           for rec in self:

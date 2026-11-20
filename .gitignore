@@ -6,7 +6,8 @@ venv/
 .ipynb_checkpoints/
 .env
 data/*.csv
-!data/*_fallback.csv        # CSV de repli versionnés (yfinance indisponible) : voir CLAUDE.md §9, S2-02
+# CSV de repli versionnés (yfinance indisponible) : voir CLAUDE.md §9, S2-02
+!data/*_fallback.csv
 *.keras
 *.h5
 .DS_Store
